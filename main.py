@@ -3,8 +3,7 @@ from fastapi.responses import FileResponse
 import os 
 
 app = FastAPI()
-UPLOAD_FOLDER = "uploads"
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+uploads = "uploads" # os.makedirs(uploads, exist_ok=True)
 
 @app.get("/")
 def root():
@@ -12,13 +11,16 @@ def root():
 
 @app.post("/process/")
 async def proc(file:UploadFile = File()):
-    input_path = os.path.join(UPLOAD_FOLDER, file.filename)
-    with open(input_path, "wb") as buffer:
-        buffer.write(await file.read())
-        return FileResponse(
-            path = input_path,
-            media_type='application/octet-stream',
-            filename=file.filename
+    input_path = os.path.join(uploads, file.filename) # получаем
+    with open(input_path, "wb") as buffer: # я буду записывать байт откроем 
+        buffer.write(await file.read()) # читаем записываем сохр в buffer и закрываем
+
+        return FileResponse( 
+            path = input_path, #конкретный стандарт path параметр 
+            media_type='application/pdf', #чтобы браузер понял что 
+            filename="compressed_" + file.filename  
         )
+        
+        
 
 
